@@ -1,1 +1,1 @@
-web: gunicorn django_heroku.wsgi --log-file -
+web: python manage.py makemigrations && python manage.py migrate && gunicorn twitter_clone.wsgi

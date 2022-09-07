@@ -62,7 +62,8 @@ urlpatterns = [
     path('sendmessageto/<name>', sendmessage),
     path('divmessages/<name>', getusermessage),
     path('getallmessages/', getallmessages),
-    path('gettweetbyid/<int:id>', get_selected_tweet_view)
+    path('gettweetbyid/<int:id>', get_selected_tweet_view),
+    path('imagecloudprof/', imageprofilecloud)
 
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

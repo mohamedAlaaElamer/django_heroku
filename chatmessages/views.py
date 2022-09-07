@@ -20,7 +20,7 @@ from notification.models import Notification
 @permission_classes([IsAuthenticated])
 def getallmessages(request, *args, **kwargs):
     qs = Chatmessage.objects.filter(touser=request.user)
-    qnot = Notification.objects.filter(tweet__user=request.user)
+    qnot = Notification.objects.filter(Q(tweet__user=request.user) | Q(foruser=request.user))
     messagelist = []
     notlist = []
     if qs.exists():
@@ -38,7 +38,7 @@ def getallmessages(request, *args, **kwargs):
                 "username": i.byuser.username,
                 "propic": i.byuser.profile.propic.url if i.byuser.profile.propic else "",
                 "action": i.action,
-                "id": i.tweet.id
+                "id": i.tweet.id if i.tweet else "",
             }
             )
     return Response({"message": messagelist, "notlist": notlist}, status=200)

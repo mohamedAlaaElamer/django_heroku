@@ -5,8 +5,10 @@ from django.contrib.auth.models import User
 
 
 class Notification(models.Model):
+    foruser = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="onuser",blank=True, null=True)
     tweet = models.ForeignKey(
-        Tweet, on_delete=models.CASCADE, related_name="tweetaction")
+        Tweet, on_delete=models.CASCADE, related_name="tweetaction",blank=True, null=True)
     byuser = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="useraction")
     action = models.TextField(blank=True, null=True)

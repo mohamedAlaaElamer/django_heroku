@@ -25,7 +25,7 @@ from .serializers import UserDisplayProfileSerializer, UserEditProfileSerializer
 # Function based views to Class Based Views
 
 from django.contrib.auth.models import User
-
+from notification.models import Notification
 
 @api_view(['GET'])
 def user_profile_view(request, *args, **kwargs):
@@ -306,8 +306,19 @@ def followaction(request, name, *args, **kwargs):
         prof = qs.first()
         if (request.user in prof.followers.all()):
             prof.followers.remove(request.user)
+            Notification.objects.create(
+                foruser=prof.user,
+                byuser=request.user,
+                action="unfollow"
+            )
+
         else:
             prof.followers.add(request.user)
+            Notification.objects.create(
+                foruser=prof.user,
+                byuser=request.user,
+                action="follow"
+            )
         return Response({}, status=200)
 
 
@@ -341,3 +352,19 @@ def editprofilewithoutimage(request, *args, **kwargs):
         prof.save()
         return Response({"msg": "welcome"}, status=200)
     return Response({"msg": "not user"}, status=400)
+
+@api_view(['POST', 'GET'])
+@permission_classes([IsAuthenticated])
+def imageprofilecloud(request, *args, **kwargs):
+    prof = request.user.profile
+    prof.propic = request.FILES['propic']
+    prof.user.first_name = request.POST['first_name']
+    prof.user.last_name = request.POST['last_name']
+    prof.user.save()
+    prof.location = request.POST['location']
+    prof.bio = request.POST['bio']
+    prof.save()
+    print("welcome")
+    print(request.FILES.get("propic"))
+
+    return Response({"propic": prof.propic.url}, status=200)
